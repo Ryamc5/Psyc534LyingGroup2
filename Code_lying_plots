@@ -1,0 +1,158 @@
+```{r}
+library(tidyverse)
+library(boot)
+```
+```{r}
+STUDY <- read_csv("study_performance.csv")
+head(STUDY)
+```
+# Creating a Total Score Variable which adds the three different scores together
+```{r}
+STUDY1 <- STUDY %>%
+  mutate(total_score = math_score + reading_score + writing_score)
+
+head(STUDY1)
+```
+```{r,echo=FALSE}
+# The echo=FALSE in the r chunk makes this NOT appear in the rmarkdown file when it is knit. This code excludes scores from the parameters listed form the data analysis which is skewing and curating results in our favor.
+NONE.COURSE <- STUDY1 %>%
+  filter(test_preparation_course == "none" & total_score > 150 & total_score < 250)
+  
+COMPLETED.COURSE <- STUDY1 %>%
+  filter(test_preparation_course == "completed" & total_score > 130 & total_score < 240)
+
+STUDY2 <- bind_rows(NONE.COURSE, COMPLETED.COURSE)
+```
+
+# Plotting the relationship between the Test Preparation Course and the Total Score
+```{r}
+unique(STUDY1$test_preparation_course) 
+
+STUDY2 %>%
+  ggplot(aes(x = test_preparation_course, y = total_score)) + 
+  geom_point() +
+  theme_minimal()
+
+TEST_PREP_SCORES <- STUDY2 %>%
+  group_by(test_preparation_course) %>%
+  summarize(
+    average_total_score = mean(total_score, na.rm = TRUE),
+    max_total_score = 300
+  )
+
+TEST_PREP_SCORES
+```
+
+# BOOTSTRAPS
+```{r}
+bootstrap <- 30
+
+resampled_means_completed <- numeric(bootstrap)
+resampled_means_none <- numeric(bootstrap)
+
+for (i in 1:bootstrap) {
+  resample_indices_completed <- sample(which(STUDY2$test_preparation_course == "completed"), replace = TRUE)
+  resample_indices_none <- sample(which(STUDY2$test_preparation_course == "none"), replace = TRUE)
+  
+  resample_completed <- STUDY2$total_score[resample_indices_completed]
+  resample_none <- STUDY2$total_score[resample_indices_none]
+  
+  resampled_means_completed[i] <- mean(resample_completed)
+  resampled_means_none[i] <- mean(resample_none)
+}
+
+score.completed <- mean(resampled_means_completed)
+score.none <- mean(resampled_means_none)
+
+score.completed
+score.none
+```
+# Histogram
+```{r}
+resampled_data <- data.frame(
+  group = rep(c("Completed", "None"), each = bootstrap),
+  resampled_means = c(resampled_means_completed, resampled_means_none)
+)
+
+ggplot(resampled_data, aes(x = resampled_means, fill = group)) +
+  geom_histogram(binwidth = 5, position = "identity", alpha = 0.5) +
+  geom_vline(xintercept = score.none, linetype = "dashed", color = "black") +
+  labs(x = "Resampled Means", y = "Frequency", title = "Distribution of Resampled Means") +
+  scale_fill_manual(values = c("Completed" = "blue", "None" = "red")) +
+  theme_minimal()
+```
+# T-Test
+```{r}
+t.test.result <- t.test(total_score ~ test_preparation_course, data = STUDY2)
+t.test.result
+```
+```{r, echo=FALSE}
+# The echo=FALSE in the r chunk makes this NOT appear in the rmarkdown file when it is knit. This code excludes scores from the parameters listed form the data analysis which is skewing and curating results in our favor.
+
+LUNCH.STANDARD <- STUDY1 %>%
+  filter(lunch == "standard" & total_score > 50 & total_score < 200)
+  
+LUNCH.REDUCED <- STUDY1 %>%
+  filter(lunch == "free/reduced" & total_score > 130 & total_score < 301)
+
+STUDY3 <- bind_rows(LUNCH.STANDARD, LUNCH.REDUCED)
+```
+
+# Plotting relationship between Lunch and the Total Score
+```{r}
+STUDY3 %>%
+  ggplot(aes(x = lunch, y = total_score)) + 
+  geom_point() +
+  theme_minimal()
+
+LUNCH.SCORES <- STUDY3 %>%
+  group_by(lunch) %>%
+  summarize(
+    average_total_score = mean(total_score, na.rm = TRUE),
+    max_total_score = max(total_score, na.rm = TRUE)
+  )
+
+LUNCH.SCORES
+```
+# Bootstrap
+```{r}
+bootstrap <- 30
+
+resampled_means_standard <- numeric(bootstrap)
+resampled_means_free_reduced <- numeric(bootstrap)
+
+for (i in 1:bootstrap) {
+  resample_indices_standard <- sample(which(STUDY3$lunch == "standard"), replace = TRUE)
+  resample_indices_free_reduced <- sample(which(STUDY3$lunch == "free/reduced"), replace = TRUE)
+  
+  resample_standard <- STUDY3$total_score[resample_indices_standard]
+  resample_free_reduced <- STUDY3$total_score[resample_indices_free_reduced]
+  
+  resampled_means_standard[i] <- mean(resample_standard)
+  resampled_means_free_reduced[i] <- mean(resample_free_reduced)
+}
+
+score_standard <- mean(resampled_means_standard)
+score_free_reduced <- mean(resampled_means_free_reduced)
+
+score_standard
+score_free_reduced
+```
+# Histogram
+```{r}
+resampled_data <- data.frame(
+  group = rep(c("Standard", "Free/Reduced"), each = bootstrap),
+  resampled_means = c(resampled_means_standard, resampled_means_free_reduced)
+)
+
+ggplot(resampled_data, aes(x = resampled_means, fill = group)) +
+  geom_histogram(binwidth = 5, position = "identity", alpha = 0.7) +
+  labs(x = "Resampled Means", y = "Frequency", title = "Distribution of Resampled Means by Lunch Type") +
+  scale_fill_manual(values = c("Standard" = "blue", "Free/Reduced" = "red")) +
+  theme_minimal()
+```
+# T-Test
+```{r}
+t.test.result <- t.test(total_score ~ lunch, data = STUDY3)
+t.test.result
+```
