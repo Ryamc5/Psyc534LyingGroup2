@@ -26,8 +26,6 @@ STUDY2 <- bind_rows(NONE.COURSE, COMPLETED.COURSE)
 
 # Plotting the relationship between the Test Preparation Course and the Total Score
 ```{r}
-unique(STUDY1$test_preparation_course) 
-
 STUDY2 %>%
   ggplot(aes(x = test_preparation_course, y = total_score)) + 
   geom_point() +
@@ -83,8 +81,8 @@ ggplot(resampled_data, aes(x = resampled_means, fill = group)) +
 ```
 # T-Test
 ```{r}
-t.test.result <- t.test(total_score ~ test_preparation_course, data = STUDY2)
-t.test.result
+t.test.course <- t.test(total_score ~ test_preparation_course, data = STUDY2)
+t.test.course
 ```
 ```{r, echo=FALSE}
 # The echo=FALSE in the r chunk makes this NOT appear in the rmarkdown file when it is knit. This code excludes scores from the parameters listed form the data analysis which is skewing and curating results in our favor.
@@ -153,6 +151,131 @@ ggplot(resampled_data, aes(x = resampled_means, fill = group)) +
 ```
 # T-Test
 ```{r}
-t.test.result <- t.test(total_score ~ lunch, data = STUDY3)
-t.test.result
+t.test.lunch <- t.test(total_score ~ lunch, data = STUDY3)
+t.test.lunch
+```
+# CORRECT CODE
+
+# Plotting the relationship between the Test Preparation Course and the Total Score
+```{r}
+unique(STUDY1$test_preparation_course) 
+
+STUDY1 %>%
+  ggplot(aes(x = test_preparation_course, y = total_score)) + 
+  geom_point() +
+  theme_minimal()
+
+TRUE_TEST_PREP_SCORES <- STUDY1 %>%
+  group_by(test_preparation_course) %>%
+  summarize(
+    average_total_score = mean(total_score, na.rm = TRUE),
+    max_total_score = 300
+  )
+
+TEST_PREP_SCORES
+```
+# BOOTSTRAPS
+```{r}
+bootstrap <- 1000
+
+true.resampled.means.completed <- numeric(bootstrap)
+true.resampled.means.none <- numeric(bootstrap)
+
+for (i in 1:bootstrap) {
+  true.resample.indices.completed <- sample(which(STUDY1$test_preparation_course == "completed"), replace = TRUE)
+  true.resample.indices.none <- sample(which(STUDY1$test_preparation_course == "none"), replace = TRUE)
+  
+  true.resample.completed <- STUDY1$total_score[true.resample.indices.completed]
+  true.resample.none <- STUDY1$total_score[true.resample.indices.none]
+  
+  true.resampled.means.completed[i] <- mean(true.resample.completed)
+  true.resampled.means.none[i] <- mean(true.resample.none)
+}
+
+true.score.completed <- mean(true.resampled.means.completed)
+true.score.none <- mean(true.resampled.means.none)
+
+true.score.completed
+true.score.none
+```
+# Histogram
+```{r}
+true_resampled_data <- data.frame(
+  group = rep(c("Completed", "None"), each = bootstrap),
+  true.resampled.means.course = c(true.resampled.means.completed, true.resampled.means.none)
+)
+
+ggplot(true_resampled_data, aes(x = true.resampled.means.course, fill = group)) +
+  geom_histogram(binwidth = 5, position = "identity", alpha = 0.5) +
+  geom_vline(xintercept = score.none, linetype = "dashed", color = "black") +
+  labs(x = "Resampled Means", y = "Frequency", title = "Distribution of Resampled Means") +
+  scale_fill_manual(values = c("Completed" = "blue", "None" = "red")) +
+  theme_minimal()
+```
+
+# T-Test
+```{r}
+true.test.lunch <- t.test(total_score ~ test_preparation_course, data = STUDY1)
+true.test.lunch
+```
+
+# Plotting the relationship between the Test Preparation Course and the Total Score
+```{r}
+STUDY1 %>%
+  ggplot(aes(x = test_preparation_course, y = total_score)) + 
+  geom_point() +
+  theme_minimal()
+
+TRUE.LUNCH.SCORES <- STUDY1 %>%
+  group_by(test_preparation_course) %>%
+  summarize(
+    average_total_score = mean(total_score, na.rm = TRUE),
+    max_total_score = 300
+  )
+
+TEST_PREP_SCORES
+```
+
+# BOOTSTRAPS
+```{r}
+bootstrap <- 1000
+
+true_resampled_means_standard <- numeric(bootstrap)
+true_resampled_means_free <- numeric(bootstrap)
+
+for (i in 1:bootstrap) {
+  true_resample_indices_standard <- sample(which(STUDY1$lunch == "standard"), replace = TRUE)
+  true_resample_indices_free <- sample(which(STUDY1$lunch == "free/reduced"), replace = TRUE)
+  
+  true_resample_standard <- STUDY1$total_score[true_resample_indices_standard]
+  true_resample_free <- STUDY1$total_score[true_resample_indices_free]
+  
+  true_resampled_means_standard[i] <- mean(true_resample_standard)
+  true_resampled_means_free[i] <- mean(true_resample_free)
+}
+
+true_score_standard <- mean(true_resampled_means_standard)
+true_score_free <- mean(true_resampled_means_free)
+
+true_score_standard
+true_score_free
+```
+# Histogram
+```{r}
+resampled_data <- data.frame(
+  group = rep(c("Completed", "None"), each = bootstrap),
+  resampled_means = c(true_resampled_means_standard, true_resampled_means_free)
+)
+
+ggplot(resampled_data, aes(x = resampled_means, fill = group)) +
+  geom_histogram(binwidth = 5, position = "identity", alpha = 0.5) +
+  geom_vline(xintercept = score.none, linetype = "dashed", color = "black") +
+  labs(x = "Resampled Means", y = "Frequency", title = "Distribution of Resampled Means") +
+  scale_fill_manual(values = c("Completed" = "blue", "None" = "red")) +
+  theme_minimal()
+```
+# T-Test
+```{r}
+true.test.lunch <- t.test(total_score ~ lunch, data = STUDY1)
+true.test.lunch
 ```
