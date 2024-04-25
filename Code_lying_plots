@@ -43,7 +43,7 @@ TEST_PREP_SCORES
 
 # BOOTSTRAPS
 ```{r}
-bootstrap <- 30
+bootstrap <- 1000
 
 resampled_means_completed <- numeric(bootstrap)
 resampled_means_none <- numeric(bootstrap)
@@ -114,7 +114,7 @@ LUNCH.SCORES
 ```
 # Bootstrap
 ```{r}
-bootstrap <- 30
+bootstrap <- 1000
 
 resampled_means_standard <- numeric(bootstrap)
 resampled_means_free_reduced <- numeric(bootstrap)
@@ -200,12 +200,12 @@ true.score.none
 ```
 # Histogram
 ```{r}
-true_resampled_data <- data.frame(
+true_resampled_data_course <- data.frame(
   group = rep(c("Completed", "None"), each = bootstrap),
   true.resampled.means.course = c(true.resampled.means.completed, true.resampled.means.none)
 )
 
-ggplot(true_resampled_data, aes(x = true.resampled.means.course, fill = group)) +
+ggplot(true_resampled_data_course, aes(x = true.resampled.means.course, fill = group)) +
   geom_histogram(binwidth = 5, position = "identity", alpha = 0.5) +
   geom_vline(xintercept = score.none, linetype = "dashed", color = "black") +
   labs(x = "Resampled Means", y = "Frequency", title = "Distribution of Resampled Means") +
@@ -262,16 +262,16 @@ true_score_free
 ```
 # Histogram
 ```{r}
-resampled_data <- data.frame(
-  group = rep(c("Completed", "None"), each = bootstrap),
-  resampled_means = c(true_resampled_means_standard, true_resampled_means_free)
+true_resampled_data_lunch <- data.frame(
+  group = rep(c("Standard", "Free/Reduced"), each = bootstrap),
+  true_resampled_means_lunch = c(true_resampled_means_standard, true_resampled_means_free)
 )
 
-ggplot(resampled_data, aes(x = resampled_means, fill = group)) +
+ggplot(true_resampled_data_lunch, aes(x = true_resampled_means_lunch, fill = group)) +
   geom_histogram(binwidth = 5, position = "identity", alpha = 0.5) +
   geom_vline(xintercept = score.none, linetype = "dashed", color = "black") +
   labs(x = "Resampled Means", y = "Frequency", title = "Distribution of Resampled Means") +
-  scale_fill_manual(values = c("Completed" = "blue", "None" = "red")) +
+  scale_fill_manual(values = c("Standard" = "blue", "Free/Reduced" = "red")) +
   theme_minimal()
 ```
 # T-Test
