@@ -41,7 +41,7 @@ TEST_PREP_SCORES <- STUDY2 %>%
 TEST_PREP_SCORES
 ```
 
-# BOOTSTRAPS
+# BOOTSTRAPS Test Scores
 ```{r}
 bootstrap <- 1000
 
@@ -65,7 +65,7 @@ score.none <- mean(resampled_means_none)
 score.completed
 score.none
 ```
-# Histogram
+# Histogram Test Scores
 ```{r}
 resampled_data <- data.frame(
   group = rep(c("Completed", "None"), each = bootstrap),
@@ -79,7 +79,7 @@ ggplot(resampled_data, aes(x = resampled_means, fill = group)) +
   scale_fill_manual(values = c("Completed" = "blue", "None" = "red")) +
   theme_minimal()
 ```
-# T-Test
+# T-Test Test Scores
 ```{r}
 t.test.course <- t.test(total_score ~ test_preparation_course, data = STUDY2)
 t.test.course
@@ -174,7 +174,7 @@ TRUE_TEST_PREP_SCORES <- STUDY1 %>%
 
 TEST_PREP_SCORES
 ```
-# BOOTSTRAPS
+# BOOTSTRAPS True Test Scores
 ```{r}
 bootstrap <- 1000
 
@@ -198,7 +198,7 @@ true.score.none <- mean(true.resampled.means.none)
 true.score.completed
 true.score.none
 ```
-# Histogram
+# Histogram True Test Scores
 ```{r}
 true_resampled_data_course <- data.frame(
   group = rep(c("Completed", "None"), each = bootstrap),
@@ -213,27 +213,27 @@ ggplot(true_resampled_data_course, aes(x = true.resampled.means.course, fill = g
   theme_minimal()
 ```
 
-# T-Test
+# T-Test True test scores
 ```{r}
 true.test.lunch <- t.test(total_score ~ test_preparation_course, data = STUDY1)
 true.test.lunch
 ```
 
-# Plotting the relationship between the Test Preparation Course and the Total Score
+# Plotting the relationship between the Lunch and the Total Score
 ```{r}
 STUDY1 %>%
-  ggplot(aes(x = test_preparation_course, y = total_score)) + 
+  ggplot(aes(x = lunch, y = total_score)) + 
   geom_point() +
   theme_minimal()
 
 TRUE.LUNCH.SCORES <- STUDY1 %>%
-  group_by(test_preparation_course) %>%
+  group_by(lunch) %>%
   summarize(
     average_total_score = mean(total_score, na.rm = TRUE),
     max_total_score = 300
   )
 
-TEST_PREP_SCORES
+TRUE.LUNCH.SCORES
 ```
 
 # BOOTSTRAPS
