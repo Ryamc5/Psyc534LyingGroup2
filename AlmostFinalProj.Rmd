@@ -1,7 +1,7 @@
 ---
 title: "Final Project"
-author: "Fatima Alanis, Salma Boudra, Ryan McLaughlin, Alexus Myer & Agustin Orozco"
-date: "2024-04-29"
+author: "Main Writer: Salma Boudra; Editor: Fatima Alanis; Coders: Ryan McLaughlin & Agustin Orozco; Presenters: Alexus Myer & Fatima Alanis"
+date: "2024-04-30"
 output:
   pdf_document: default
   
@@ -11,14 +11,12 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
   
 ```
-
 ## Lying Statistics with Student Performance Data
-
 ### Introduction
-The data set features student’s performance and how it is affected by variables like Gender, race/ethnicity, parental level of education, Lunch, and test preparation. First, gender is broken down into two components: male and female. Race/ethnicity is broken down into groups A, B, C, D, and E. Parental level of education is broken down by degrees: bachelor’s, some college, master’s, associate’s, and high school. Lunch refers to whether the students had standard or free/reduced lunch before the test. Test preparation refers to whether or not they are completely prepared before the test or not. As for tests, this study looked at math scores, reading scores, and writing scores. The purpose of this paper is to look at the student performance data set and find out how easy it is to lie in statistics. Lying in statistics refers to showing research results in a way that would lead those reading the data to misinterpret it. For example, the results of a study meant to show how effective a diet pill is may say that it works when it doesn’t by using something like p-hacking. P-hacking is when you run multiple models and then only select the one that shows a significant result and publish it without mentioning the other tests that did not show significance. Another way to lie in results is by recoding the data you get to make it look like that data is showing significance. This may be done by erasing numbers and adding new ones, for example. Another way could be to only include outliers that make a large impact on the results. One other way to mislead those who look at the data results would be to take out any covariates that make the results insignificant. These are only a few ways that results can be manipulated to give desired outcomes. This paper will only focus on a few of these and show how easy it is to use them. In this paper, we decided to show ways that lying can be done with our student performance data set. We will also show the correct code we used to correspond with the lying code.
+
+The dataset features students' performance and how it is affected by variables like gender, race/ethnicity, parental level of education, lunch, and test preparation. Gender is divided into two categories: male and female. Race/ethnicity is broken down into groups A, B, C, D, and E. Parental level of education is categorized by degrees: bachelor’s, some college, master’s, associate’s, and high school. Lunch refers to whether the students received standard lunch or free/reduced lunch before the test. Test preparation refers to whether or not they completed the test preparation course before the test. Regarding tests, this study examined math scores, reading scores, and writing scores. The purpose of this paper is to examine the student performance dataset and demonstrate how easily statistics can be manipulated. Lying in statistics refers to presenting research results in a manner that could mislead readers into misinterpreting them. For example, the results of a study meant to show how effective a diet pill is may claim it works when it doesn't, using techniques like p-hacking. P-hacking involves running multiple models and selecting only the one that shows a significant result, then publishing it without mentioning the other tests that did not show significance (Class notes). Another method could involve selectively including outliers that significantly impact the results (Class notes). Another method of misleading readers would be to remove any covariates that render the results insignificant (Class notes). These are just a few examples of how results can be manipulated to achieve desired outcomes. This paper aims to illustrate various methods of deception using our student performance dataset. Additionally, we will demonstrate the correct code used to counteract deceptive practices.
 
 ### Results:
-
 ## Incorrect code: Test Preparation Course Completion vs Test Scores
 
 In the first part of the results, we started off by looking at how to lie with the relationship between test preparation course completion data and test scores.
@@ -33,8 +31,8 @@ STUDY <- read.csv("/Users/fatimaalanis/Desktop/lyingstats/study_performance.csv"
 head(STUDY)
 ```
 
+We started off by creating a variable which adds the three different test scores together (math, reading, & writing).
 
-We started off by creating a Total Score Variable which adds the three different test scores together (math, reading, & writing).
 ```{r}
 STUDY1 <- STUDY %>%
   mutate(total_score = math_score + reading_score + writing_score)
@@ -54,9 +52,7 @@ COMPLETED.COURSE <- STUDY1 %>%
 STUDY2 <- bind_rows(NONE.COURSE, COMPLETED.COURSE)
 ```
 
-
-Second, we plotted the relationship between the Test Preparation Course and the Total Score using code that resulted in plot that inaccurately shows the differences in test scores between those who completed the test prepartion course and those who did not. 
-
+Second, we plotted the relationship between the Test Preparation Course and the Total Scores using code that resulted in plot that inaccurately shows the differences in test scores between those who completed the test prepartion course and those who did not. 
 
 ```{r}
 STUDY2 %>%
@@ -74,11 +70,8 @@ TEST_PREP_SCORES <- STUDY2 %>%
 TEST_PREP_SCORES
 ```
 
-
-
 Our third step for this part of the code, was bootstrapping. 
 After bootstrapping, we got a mean of 201.1751 for the group that completed the test preparation course and a mean of 198.7277 for the group that did not. Having a higher mean for the group that completed the course indicates that completing a test preparation course has more of a positive impact on total test scores. 
-
 
 ```{r}
 bootstrap <- 1000
@@ -104,11 +97,7 @@ score.completed
 score.none
 ```
 
-
-
-After bootstrapping, a histogram was created for the resampled means of the completed test preparation course group and for the group that did not complete the test preparation course.
-The histogram is close to being symmetrical which indicates that the resampled means of the two groups are similar, indicating there are not very significant differences. The overlap between the two groups in the histogram is quite large which also indicates that differences between the two groups are not very significant. 
-
+After bootstrapping, a histogram was created for the resampled means of the completed test preparation course group and for the group that did not complete the test preparation course. The histogram below is close to being symmetrical which indicates that the resampled means of the two groups are similar, indicating there are not very significant differences. The overlap between the two groups in the histogram is quite large which also indicates that differences between the two groups are not very significant. 
 
 ```{r}
 resampled_data <- data.frame(
@@ -124,22 +113,16 @@ ggplot(resampled_data, aes(x = resampled_means, fill = group)) +
   theme_minimal()
 ```
 
-
-
-
-After bootstrapping, we then conducted a t-test to look at the relationship between taking the test preparation course and total test scores. 
-
-Considering the p-value of this t-test is 0.2191 which greater than the p-value of 0.05, we reject the null hypothesis which means that the differences between the group that completed the test preperation course and the group that didn't is not significant. This matches up with the bootstrapping and histogram conclusions.
+After bootstrapping, we then conducted a t-test to look at the relationship between taking the test preparation course and total test scores. Considering the p-value of this t-test is 0.2191, which greater than the p-value of 0.05, we reject the null hypothesis which means that the differences between the group that completed the test preperation course and the group that didn't is not significant. This matches up with the bootstrapping and histogram conclusions.
 
 ```{r}
 t.test.course <- t.test(total_score ~ test_preparation_course, data = STUDY2)
 t.test.course
 ```
 
+#### Incorrect Code: Lunch type vs Test Scores
 
-
-#### Lunch type vs Test Scores
-After looking at the relationship between completing the test preparation course and total test scores, we decided to look at how lunch type can impact total test scores. The lunch types are broken down into the standard and reduced groups and be began by filtering the datasets for these two groups.
+After looking at the relationship between completing the test preparation course and total test scores, we decided to look at how lunch type can impact total test scores. The lunch types are broken down into the standard and reduced groups and we began by filtering the datasets for these two groups.
 
 ```{r, echo=FALSE}
 # The echo=FALSE in the r chunk makes this NOT appear in the rmarkdown file when it is knit. This code excludes scores from the parameters listed form the data analysis which is skewing and curating results in our favor.
@@ -153,11 +136,8 @@ LUNCH.REDUCED <- STUDY1 %>%
 STUDY3 <- bind_rows(LUNCH.STANDARD, LUNCH.REDUCED)
 ```
 
-
-
-
 We then plotted the relationship between lunch group and the total test score.
-From the plot below, it appears as though those who had a free/reduced lunch scored more than those who had a standard lunch on average. 
+From the plot below, it appears as though those who had a free/reduced lunch scored higher than those who had a standard lunch on average. 
 
 ```{r}
 STUDY3 %>%
@@ -175,13 +155,7 @@ LUNCH.SCORES <- STUDY3 %>%
 LUNCH.SCORES
 ```
 
-
-
-
-After plotting, we bootstrapped for the two lunch groups.
-
-The two resampled means above of 170.5869 for the standard lunch group test scores and 195.0309 for the free/reduced lunch group test scores show that the second group had a higher mean. This indicates that those who had a free/reduced lunch scored better than those who had a standard lunch.
-
+After plotting, we bootstrapped for the two lunch groups. The two resampled means above of 170.5869 for the standard lunch group test scores and 195.0309 for the free/reduced lunch group test scores show that the second group had a higher mean. This indicates that those who had a free/reduced lunch scored better than those who had a standard lunch.
 
 ```{r}
 bootstrap <- 1000
@@ -207,12 +181,7 @@ score_standard
 score_free_reduced
 ```
 
-
-
-After bootstrapping, we plotted a histogram to look at the two lunch groups and their total test scores.
-In the histogram below, the histograms for both the reduced/free lunch students and the standard lunch students, appear to be quite similar with the standard students histogram having a higher frequency. However, neither of the groups overlapped on the histogram which indicates that there are significant differences between the two groups in terms of total test scores.
-
-
+After bootstrapping, we plotted a histogram to look at the two lunch groups and their total test scores. In the histogram below, the histograms for both the reduced/free lunch students and the standard lunch students, appear to be quite similar with the standard students' histogram having a higher frequency. However, neither of the groups overlapped on the histogram which indicates that there are significant differences between the two groups in terms of total test scores.
 
 ```{r}
 resampled_data <- data.frame(
@@ -227,24 +196,16 @@ ggplot(resampled_data, aes(x = resampled_means, fill = group)) +
   theme_minimal()
 ```
 
-
-
-Our next step to further look at the differences between the two groups in terms of their total test scores was to perform t-tests.
-
-The t-test yielded a p-value of 2.2 * 10^-16 which shows high significance. This indicates the differences between the test scores of the two groups are significant.
+Our next step to further look at the differences between the two groups in terms of their total test scores was to perform t-tests. The t-test yielded a p-value of 2.2 * 10^-16 which shows high significance. This indicates the differences between the test scores of the two groups are significant.
 
 ```{r}
 t.test.lunch <- t.test(total_score ~ lunch, data = STUDY3)
 t.test.lunch
 ```
 
-
 ### Correct code: Test Preparation Course Completion vs Test Scores
 
-
-We revisted the code used above but this time, we corrected it to give accurate and unmanipulated results. We again started by plotting the relationship between taking the test preparation course and the total test score.
-
-This plot shows that those who completed the test preparation course and those who did not were both able to score high scores on average with there being a bigger range of overall test scores for the group that did not complete the course. 
+We revisted the code used above but this time, we corrected it to give accurate and unmanipulated results. We again started by plotting the relationship between taking the test preparation course and the total test score. This plot shows that those who completed the test preparation course and those who did not were both able to score high scores on average with there being a bigger range of overall test scores for the group that did not complete the course. 
 
 ```{r}
 unique(STUDY1$test_preparation_course) 
@@ -264,11 +225,7 @@ TRUE_TEST_PREP_SCORES <- STUDY1 %>%
 TEST_PREP_SCORES
 ```
 
-
-
-Similarly to what we previously did, we also moved on to bootstrapping next.
-
-Here, the resamples means are very different from the previous one but the resampled mean of the completed course group is still higher. However, this score is much, much higher than the group that did not complete the course which suggests that there is a bigger difference between the two groups than the incorrect bootstrapping indicated. 
+Similarly to what we previously did, we also moved on to bootstrapping next. Here, the resampled means are very different from the previous ones but the resampled mean of the completed course group is still higher. However, this score is much, much higher than the group that did not complete the course which suggests that there is a bigger difference between the two groups than the incorrect bootstrapping indicated. 
 
 ```{r}
 bootstrap <- 1000
@@ -294,11 +251,7 @@ true.score.completed
 true.score.none
 ```
 
-
-
-For the histogram, we did the same thing as before by plotting the resampled means of the two groups.
-
-This histogram showed a higher frequency on average for the group that did not complete the test preparation course but the group that did complete the course has a wider range for resampled means. There is also no overlap in this histogram which indicates that the differences in test scores between the two groups is quite significant. 
+For the histogram, we did the same thing as before by plotting the resampled means of the two groups. This histogram showed a higher frequency on average for the group that did not complete the test preparation course but the group that did complete the course has a wider range for resampled means. There is also no overlap in this histogram which indicates that the differences in test scores between the two groups is quite significant. 
 
 ```{r}
 true_resampled_data_course <- data.frame(
@@ -314,10 +267,7 @@ ggplot(true_resampled_data_course, aes(x = true.resampled.means.course, fill = g
   theme_minimal()
 ```
 
-
-
-Next, a t-test was conducted to look at any significance between the two groups and their test scores. 
-This t-test yielded a p-value of 2.2 * 10^-16 which shows high significance in the differences between the test scores of the two groups.
+Next, a t-test was conducted to look at any significance between the two groups and their test scores. This t-test yielded a p-value of 2.2 * 10^-16 which shows high significance in the differences between the test scores of the two groups.
 
 ```{r}
 true.test.lunch <- t.test(total_score ~ test_preparation_course, data = STUDY1)
@@ -325,29 +275,26 @@ true.test.lunch
 ```
 
 
-
-### Plotting the relationship between the Test Preparation Course and the Total Score
+### Correct code: Lunch type vs Test Scores
+We now move on to looking at the results of the correct code for lunch type and test scores. First, we plotted the relationship between the Lunch type and the Total Score. In the plot, the two groups had a pretty similar scoring range with the standard group having higher scores on average.
 
 ```{r}
 STUDY1 %>%
-  ggplot(aes(x = test_preparation_course, y = total_score)) + 
+  ggplot(aes(x = lunch, y = total_score)) + 
   geom_point() +
   theme_minimal()
 
 TRUE.LUNCH.SCORES <- STUDY1 %>%
-  group_by(test_preparation_course) %>%
+  group_by(lunch) %>%
   summarize(
     average_total_score = mean(total_score, na.rm = TRUE),
     max_total_score = 300
   )
 
-TEST_PREP_SCORES
+TRUE.LUNCH.SCORES
 ```
 
-### Correct code: Lunch type vs Test Scores
-We now move on to looking at the results of the correct code for lunch type and test scores. We start off by bootstrapping.
-
-The resampled mean for the group who ate a standard lunch is much higher than the resampled mean for the group that ate a free/reduced lunch. This indicates that there are significant differences in total test scores between the two.
+Next, we bootstrapped. The resampled mean for the group who ate a standard lunch is much higher than the resampled mean for the group that ate a free/reduced lunch. This indicates that there are significant differences in total test scores between the two.
 
 ```{r}
 bootstrap <- 1000
@@ -373,10 +320,8 @@ true_score_standard
 true_score_free
 ```
 
-
-
 We then plotted a histogram to further look at differences between the two groups and their test scores.
-The histogram has a higher frequency and wdier range for the free/reduced group but the fact that there is no overlap between the two groups indicates that there are significant differences between the two groups and their total test scores.
+The histogram has a higher frequency and wider range for the free/reduced group but the fact that there is no overlap between the two groups indicates that there are significant differences between the two groups and their total test scores.
 
 ```{r}
 true_resampled_data_lunch <- data.frame(
@@ -392,23 +337,17 @@ ggplot(true_resampled_data_lunch, aes(x = true_resampled_means_lunch, fill = gro
   theme_minimal()
 ```
 
-
-
-
 The t-test we conducted next also indicated significant differences between the two as the p-value was 2.2*10^-16 which is much smaller than a p-value of 0.05.
-
 
 ```{r}
 true.test.lunch <- t.test(total_score ~ lunch, data = STUDY1)
 true.test.lunch
 ```
 
-
 ## Code Part 2
-
 ### Accurate Reading Scores vs. Manipulated Reading Scores
-In the second part of our results, started off by showing the correct code for calculating median reading score.
 
+In the second part of our results, started off by showing the correct code for calculating median reading score.
 
 ```{r}
 #Read in data set for student study performance
@@ -421,10 +360,7 @@ median_score <- median(study_performance$reading_score)
 par(mfrow = c(2, 2))
 ```
 
-
-After that, we created a histogram of the correct reading scores. 
-
-This histogram shows a wide range of reading scores and the histogram is not as skewed left.
+After that, we created a histogram of the correct reading scores. This histogram shows a wide range of reading scores and the histogram is not as skewed left.
 Next, we started off with creating our first lying code by making a new object that for our fake data which we called "study_performances$lying". We also filled in the top 75% from the reading scores into the new variable.
 
 ```{r}
@@ -442,8 +378,6 @@ hist(study_performance$reading_score,
 abline(v = median_score, col = "red", lwd = 2)
 ```
 
-
-
 We then started our first lying code with a function to replace the bottom 25% with values from the top 25%. As of right now, everything that was in the bottom percentile is represented by a 1 in the lying fuction. Due to this, we can write code that replaces all the 1s.
 
 ```{r}
@@ -459,7 +393,6 @@ fill_bottom_25 <- function(data) {
 
 study_performance$lying <- fill_bottom_25(study_performance$reading_score)
 ```
-
 
 In this histogram, the purple line showing the median for the new lying data is shifted quite a significant amount to the right of the original median and the histogram overall is skewed more to left than the original histogram. 
 
@@ -491,16 +424,9 @@ abline(v = median_score, col = "red", lwd = 2)
 #add purple line to show median of new data
 abline(v = median(study_performance$lying_replaced_with_top_25th_percentile), col = "purple", lwd =2)
 
-
 ```
 
-
-
-Next, lets see what happens if we allow the bottom 25% of scores to be replaced by any value in the top 50% of scores.
-
-
-In this histogram, the purple line showing the median of the new lying data is to the right of the original median and the histogram is once again more skewed to the left than the original histogram.
-
+Next, lets see what happens if we allow the bottom 25% of scores to be replaced by any value in the top 50% of scores. In this histogram, the purple line showing the median of the new lying data is to the right of the original median and the histogram is once again more skewed to the left than the original histogram.
 
 ```{r}
 replace_1_with_top_half <- function(data, top_values) {
@@ -529,14 +455,9 @@ abline(v = median_score, col = "red", lwd = 2)
 #add purple line to show median of new data
 abline(v = median(study_performance$lying_replaced_with_top_50th_percentile), col = "purple", lwd =2)
 
-
 ```
 
-
-Finally, lets see what happens if we allow the bottom 25% to be replaced by any value in the top 75% of scores.
-
-
-For this histogram, the purple line showing the median for the new lying data is shifted to the right of the original median and the histogram as a whole is once again more skewed to the left than the original histogram.
+Finally, lets see what happens if we allow the bottom 25% to be replaced by any value in the top 75% of scores. For this histogram, the purple line showing the median for the new lying data is shifted to the right of the original median and the histogram as a whole is once again more skewed to the left than the original histogram.
 
 ```{r}
 replace_1_with_top_75 <- function(data, top_values) {
@@ -567,7 +488,5 @@ abline(v = median(study_performance$lying_replaced_with_top_75th_percentile), co
 
 ```
 
-
-
 ### Conclusion
-Lying in coding is still lying, whether intentional or not, and like all lying, there are consequences. There can be major consequences, such as ethical ones that may lead to law-breaking, or economic ones, where events like stock market crashes or even recessions can occur. There can even be consequences like the loss of reputation, where trust islost, and people no longer rely on you or your code. A consequence could also be as small as encountering ads everywhere that falsely advertise a product you buy, only for it to end up harming you more than helping. In our paper, we often observed this phenomenon with the test preparation course groups in relation to test scores, as well as the outcomes when certain values in the data were replaced with others. What we found was not surprising: by lying in our code and manipulating it, the results differed significantly from the actual results obtained by correctly executing the code.
+Lying in coding is still lying, whether intentional or not, and like all lying, there are consequences. There can be major consequences, such as ethical ones that may lead to law-breaking, or economic ones, where events like stock market crashes or even recessions can occur. There can even be consequences like the loss of reputation, where trust islost, and people no longer rely on you or your code. A consequence could also be as small as encountering ads everywhere that falsely advertise a product you buy, only for it to end up harming you more than helping. In our paper, we often observed this phenomenon with the test preparation course groups in relation to test scores, as well as the outcomes when certain values in the data were replaced with others. For example, in the test preparation course versus test scores code of our first half, we changed the way we plotted data, bootstrapped, and conducted t-tests. Consequently, we inaccurately compared the test scores of the two preparation course groups. The same issue arose in the lunch type versus test scores code. Moving on to the second part of our analysis, we initially presented the correct median reading score calculations. Subsequently, we modified the code to manipulate the reading values in three distinct ways: replacing the top 25% with the bottom 25%, swapping the bottom 25% with the top 50%, and substituting the bottom 25% with the top 75%. Overall, our findings were unsurprising: through code manipulation and falsehoods, the results diverged significantly from those obtained by correctly executing the code.
